@@ -11,9 +11,6 @@ func ServerInit() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 
 	handler := newServerHandler()
-
-	http.HandleFunc("/login", handler.loginHandler)
-	http.HandleFunc("/chatbot", handler.chatbotRequestHandler)
 	http.HandleFunc("/qna_enter", handler.qnAEnterHandler)
 	http.HandleFunc("/qna_answer", handler.answerRegisterHandler)
 	http.HandleFunc("/qna_question", handler.questionRegisterHandler)
