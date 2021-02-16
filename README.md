@@ -16,10 +16,10 @@ print(req.text)
 #### 2. 질문 등록
    * url : http://119.192.41.219:9184/qna_question
    * method : POST
-   * parameter : {"question": "테스트 중입니다.", "questionEntranceYear": "2020", "questionDepartment": "컴퓨터공학부"}
+   * parameter : {"question": "테스트 중입니다.", "id": "c17"}
    * 코드예제
 ```python
-addQ = {"question": "테스트 중입니다.", "questionEntranceYear": "2020", "questionDepartment": "컴퓨터공학부"}
+addQ = {"question": "테스트 중입니다.", "id": "c17"}
 req = requests.post("http://119.192.41.219:9184/qna_question", data=addQ)
 print(req.text)
 ```
