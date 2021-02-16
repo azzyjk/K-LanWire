@@ -1,3 +1,4 @@
+# 모델 deploy용 Python File
 
 # https://huggingface.co/transformers/installation.html
 # pip install transformers
