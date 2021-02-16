@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Logo from "../Component/Logo";
 import DepartmentPicker from "../Component/DepartmentPicker";
 import EntranceYearPicker from "../Component/EntranceYearPicker";
 import JobPicker from "../Component/JobPicker";
 
-export default function InitScreen() {
+export default function InitScreen({ haveInfo, setHaveInfo }) {
   const [department, setDepartment] = useState("컴퓨터공학부");
   const [entranceYear, setEntranceYear] = useState("2021");
   const [job, setJob] = useState("Professor");
+
+  const _onPressButton = async () => {
+    await AsyncStorage.setItem("department", department);
+    await AsyncStorage.setItem("entranceYear", entranceYear);
+    await AsyncStorage.setItem("job", job);
+    setHaveInfo(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -31,7 +39,7 @@ export default function InitScreen() {
         />
       </View>
       <View style={styles.buttonComponent}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={_onPressButton}>
           <Text style={styles.buttonFont}> 시작하기 </Text>
         </TouchableOpacity>
       </View>
