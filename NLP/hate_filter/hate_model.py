@@ -1,4 +1,4 @@
-# 모델 deploy용 Python File
+# 모델 deploy용 Python File, 학습과정은 hate_model.ipynb에서 
 
 # https://huggingface.co/transformers/installation.html
 # pip install transformers
