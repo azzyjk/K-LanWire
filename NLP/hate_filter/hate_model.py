@@ -12,7 +12,7 @@ EMB_LEN = 76
 DEFAULT_THRESH = 0.7
 
 def load_model():
-    electra_model = TFElectraModel.from_pretrained('monologg/koelectra-base-v3-discriminator', from_pt=True)
+    electra_model = TFElectraModel.from_pretrained('monologg/koelectra-small-v3-discriminator', from_pt=True)
 
     input_toks = tf.keras.layers.Input(shape=(EMB_LEN,), name='toks', dtype='int32')
     input_masks = tf.keras.layers.Input(shape=(EMB_LEN,), name='masks', dtype='int32')
@@ -20,8 +20,8 @@ def load_model():
     electra_output = electra_model(input_toks, attention_mask=input_masks).last_hidden_state
 
     x = tf.keras.layers.GlobalAveragePooling1D()(electra_output)
-    x = tf.keras.layers.Dense(128, activation='relu')(x)
-    x = tf.keras.layers.Dropout(0.2)(x)
+    # x = tf.keras.layers.Dense(128, activation='relu')(x)
+    # x = tf.keras.layers.Dropout(0.2)(x)
     x = tf.keras.layers.Dense(32, activation='relu')(x)
     x = tf.keras.layers.Dropout(0.2)(x)
     y = tf.keras.layers.Dense(2, activation='softmax')(x)
@@ -32,7 +32,7 @@ def load_model():
     return model
 
 logging.set_verbosity_error()
-tokenizer = ElectraTokenizer.from_pretrained('monologg/koelectra-base-v3-discriminator')
+tokenizer = ElectraTokenizer.from_pretrained('monologg/koelectra-small-v3-discriminator')
 model = load_model()
 
 
