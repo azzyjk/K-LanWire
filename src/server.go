@@ -26,6 +26,4 @@ func AiCheckerInit() {
 	// set flag
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 
-	checker := newAiChecker()
-	checker.aiCheckAnswer()
 }

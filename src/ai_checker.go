@@ -1,34 +1,22 @@
 package src
 
-import (
-	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"log"
-	"time"
-)
-
-type AiChecker struct {
-	db *sql.DB
+type answerChecker struct {
+	checker *aiChecker
 }
 
-func newAiChecker() *AiChecker {
-	aiChecker := &AiChecker{}
-	aiChecker.db, _ = sql.Open("mysql", "kuai:1q2w3e4r!@tcp(192.168.50.211:3306)/kudata")
+func newAnswerChecker() *answerChecker {
 
-	return aiChecker
+	newAnswerChecker := &answerChecker{}
+	newAnswerChecker.checker = newAiChecker("answer", "ticker_check_mq_val.txt")
+	return newAnswerChecker
 }
 
-func (a *AiChecker) aiCheckAnswer() {
+func (a *answerChecker) checkWrong(sentence string) bool {
 
-	ticker := time.NewTicker(time.Hour)
-
-	for {
-		<-ticker.C
-		go a.oneCheck()
+	result := a.checker.publishQueue(sentence)
+	if result == 1 {
+		return true
+	} else {
+		return false
 	}
-}
-
-func (a *AiChecker) oneCheck() {
-
-	log.Println("한번 호출됨")
 }
