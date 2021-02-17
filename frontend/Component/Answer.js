@@ -45,10 +45,15 @@ export default function Answer({ num, navigation }) {
   };
 
   const _onPressButton = () => {
-    axios(sendData).then((res) => {
-      Alert.alert("답변이 등록되었습니다.");
-      navigation.goBack();
-    });
+    axios(sendData)
+      .then((res) => {
+        Alert.alert("답변이 등록되었습니다.");
+        navigation.goBack();
+      })
+      .catch((err) => {
+        Alert.alert("부적절한 답변입니다.\n 다시 입력해주세요.");
+        onChnageText("");
+      });
   };
 
   return (
