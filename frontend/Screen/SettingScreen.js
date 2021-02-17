@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, StyleSheet, Text, Alert } from "react-native";
 
 import Logo from "../Component/Logo";
 import DepartmentPicker from "../Component/DepartmentPicker";
 import EntranceYearPicker from "../Component/EntranceYearPicker";
-import JobPicker from "../Component/JobPicker";
+import JobPicker from "..//Component/JobPicker";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function InitScreen({ haveInfo, setHaveInfo }) {
+export default function SettingScreen({ navigation }) {
   const [department, setDepartment] = useState("컴퓨터공학부");
   const [entranceYear, setEntranceYear] = useState("2021");
   const [job, setJob] = useState("Professor");
@@ -17,7 +18,8 @@ export default function InitScreen({ haveInfo, setHaveInfo }) {
     await AsyncStorage.setItem("job", job);
     if (job == "Professor") await AsyncStorage.setItem("entranceYear", "0");
     else await AsyncStorage.setItem("entranceYear", entranceYear);
-    setHaveInfo(true);
+    Alert.alert("수정되었습니다.");
+    navigation.goBack();
   };
 
   return (
@@ -25,14 +27,14 @@ export default function InitScreen({ haveInfo, setHaveInfo }) {
       <View style={styles.logoComponent}>
         <Logo />
       </View>
-      <View style={styles.pickerComponent}>
+      <View style={styles.picker}>
         <DepartmentPicker
           department={department}
           setDepartment={setDepartment}
         />
       </View>
       <JobPicker job={job} setJob={setJob} />
-      <View style={styles.pickerComponent}>
+      <View style={styles.picker}>
         <EntranceYearPicker
           entranceYear={entranceYear}
           setEntranceYear={setEntranceYear}
@@ -41,7 +43,7 @@ export default function InitScreen({ haveInfo, setHaveInfo }) {
       </View>
       <View style={styles.buttonComponent}>
         <TouchableOpacity onPress={_onPressButton}>
-          <Text style={styles.buttonFont}> 시작하기 </Text>
+          <Text style={styles.buttonFont}> 수정하기 </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -58,9 +60,8 @@ const styles = StyleSheet.create({
   logoComponent: {
     flex: 2,
     justifyContent: "center",
-    paddingTop: 30,
   },
-  pickerComponent: {
+  picker: {
     flex: 2,
     justifyContent: "center",
   },

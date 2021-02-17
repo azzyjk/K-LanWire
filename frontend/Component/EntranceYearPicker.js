@@ -7,7 +7,7 @@ export default function EntranceYearPicker({
   setEntranceYear,
   job,
 }) {
-  const years = ["2021", "2020", "2019"];
+  const years = ["2019", "2018", "2017"];
   if (job == "Professor") return <View />;
   return (
     <View style={styles.container}>

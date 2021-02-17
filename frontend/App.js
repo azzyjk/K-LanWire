@@ -4,6 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import InitScreen from "./Screen/InitScreen";
 
+import Navigator from "./Navigator/Navigator";
+
 export default function App() {
   const [haveInfo, setHaveInfo] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,5 +25,5 @@ export default function App() {
   if (isLoading == false) return <View />;
   if (haveInfo == false)
     return <InitScreen haveInfo={haveInfo} setHaveInfo={setHaveInfo} />;
-  else return <View />;
+  else return <Navigator />;
 }

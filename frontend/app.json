@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "K-LanWire",
+    "slug": "k-lanwire",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,6 +27,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "건국대학교 단비 AI를 활용한 대회",
+    "githubUrl": "https://github.com/azzyjk/K-LanWire"
   }
 }
