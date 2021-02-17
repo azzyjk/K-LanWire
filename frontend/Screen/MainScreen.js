@@ -19,7 +19,12 @@ export default function MainScreen({ navigation }) {
       <TouchableOpacity style={styles.buttonComponent}>
         <Text style={styles.buttonFont}> 챗봇</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonComponent}>
+      <TouchableOpacity
+        style={styles.buttonComponent}
+        onPress={() => {
+          navigation.navigate("QnA");
+        }}
+      >
         <Text style={styles.buttonFont}> Q & A 게시판</Text>
       </TouchableOpacity>
     </View>
