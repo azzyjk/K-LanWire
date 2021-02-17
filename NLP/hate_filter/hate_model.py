@@ -20,10 +20,6 @@ def load_model():
     electra_output = electra_model(input_toks, attention_mask=input_masks).last_hidden_state
 
     x = tf.keras.layers.GlobalAveragePooling1D()(electra_output)
-    # x = tf.keras.layers.Dense(128, activation='relu')(x)
-    # x = tf.keras.layers.Dropout(0.2)(x)
-    # x = tf.keras.layers.Dense(32, activation='relu')(x)
-    # x = tf.keras.layers.Dropout(0.2)(x)
     y = tf.keras.layers.Dense(2, activation='softmax')(x)
 
     model = tf.keras.models.Model(inputs=[input_toks, input_masks], outputs=y)
@@ -41,7 +37,7 @@ def preprocess(texts):
     clean_texts = []
 
     for text in texts:
-        cleaned = re.sub('[^가-힣\s]', '', text)
+        cleaned = re.sub('[^ .,?!가-힣]', '', text)
         cleaned = spell_checker.check(cleaned).checked
         clean_texts.append(cleaned)
     
