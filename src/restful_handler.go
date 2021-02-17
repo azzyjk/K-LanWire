@@ -12,25 +12,27 @@ import (
 )
 
 type serverHandler struct {
-	db            *sql.DB
-	showByMajor   map[string][3]string
-	parsedMajor   []string
-	rawMajor      string
-	chatBotInput  *chatBotInputer
-	answerChecker *answerChecker
+	db              *sql.DB
+	showByMajor     map[string][3]string
+	parsedMajor     []string
+	rawMajor        string
+	chatBotInput    *chatBotInputer
+	answerChecker   *answerChecker
+	questionChecker *questionChecker
 }
 
 func newServerHandler() *serverHandler {
 	newHandler := &serverHandler{}
 	newHandler.db, _ = sql.Open("mysql", "kuai:1q2w3e4r!@tcp(192.168.50.211:3306)/kudata")
 	newHandler.showByMajor = make(map[string][3]string, 3)
-	newHandler.showByMajor["컴퓨터공학부"] = [3]string{"컴퓨터공학부", "기계공학과", "전기전자공학부"}
-	newHandler.showByMajor["기계공학과"] = [3]string{"기계공학과", "전기전자공학부", "컴퓨터공학부"}
-	newHandler.showByMajor["전기전자공학부"] = [3]string{"전기전자공학부", "기계공학과", "기계공학과"}
-	newHandler.parsedMajor = []string{"컴퓨터공학부", "기계공학과", "전기전자공학부"}
+	newHandler.showByMajor["컴퓨터공학부"] = [3]string{"컴퓨터공학부", "기계항공공학부", "전기전자공학부"}
+	newHandler.showByMajor["기계항공공학부"] = [3]string{"기계항공공학부", "전기전자공학부", "컴퓨터공학부"}
+	newHandler.showByMajor["전기전자공학부"] = [3]string{"전기전자공학부", "기계항공공학부", "컴퓨터공학부"}
+	newHandler.parsedMajor = []string{"컴퓨터공학부", "기계항공공학부", "전기전자공학부"}
 	newHandler.rawMajor = "cme"
 	newHandler.chatBotInput = newChatBotInputer()
 	newHandler.answerChecker = newAnswerChecker()
+	newHandler.questionChecker = newQuestionChecker()
 
 	return newHandler
 }
@@ -94,6 +96,12 @@ func (s *serverHandler) questionRegisterHandler(serverResponse http.ResponseWrit
 	key := []string{"question", "id"}
 	value := make([]string, len(key)) // value[0]만 학과를 의미함
 	if readFromRequest(&serverResponse, clientRequest, key, &value) == false {
+		return
+	}
+
+	// 0차 처리 - AI가 부적절한 답변이라고 생각하면 DB에 등록하지 않음
+	if s.questionChecker.checkWrong(value[0]) {
+		errorHandling(&serverResponse, 400, "부적절한 질문으로 간주되어 답변이 등록되지 않았습니다.", errors.New("질문 \""+value[0]+"\" 은 부적절합니다"))
 		return
 	}
 
