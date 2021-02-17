@@ -20,7 +20,6 @@ export default function QuestionScreen({ route, navigation }) {
     questionDepartment,
     questionYear,
   } = route.params;
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -46,7 +45,13 @@ export default function QuestionScreen({ route, navigation }) {
                   <View style={styles.card} key={idx}>
                     <View style={{ margin: 15 }}>
                       <Text style={{ color: "gray" }}>
-                        {`< ${answers[idx]["AnswerYear"]} ${answers[idx]["AnswerDepartment"]} >`}
+                        {`< `}
+                        {answers[idx]["AnswerYear"] == "2000" ? (
+                          <Text>교수 </Text>
+                        ) : (
+                          `${answers[idx]["AnswerYear"]} `
+                        )}
+                        {`${answers[idx]["AnswerDepartment"]} >`}
                       </Text>
                       <Text style={{ color: "gray" }}>{""}</Text>
                       <Text style={{ fontSize: 15 }}>
