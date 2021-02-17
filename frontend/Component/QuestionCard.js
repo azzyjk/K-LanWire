@@ -36,9 +36,10 @@ export default function QuestionCard({
             ellipsizeMode="tail"
           >
             {"Q : "}
-            {question.length < 30
+            {question.length < 20
               ? `${question}`
-              : `${question.substring(0, 20)}...`}
+              : `${question.substring(0, 19)}...`}
+
             {solved == true ? (
               <Ionicons name="md-checkmark" size={20} color="green" />
             ) : (

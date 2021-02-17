@@ -20,9 +20,7 @@ export default function QuestionScreen({ route, navigation }) {
     questionDepartment,
     questionYear,
   } = route.params;
-  console.log(
-    `${num}\n ${question}\n ${solved}\n ${answers}\n ${questionDepartment}\n ${questionYear}`
-  );
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
