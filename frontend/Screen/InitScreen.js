@@ -14,8 +14,9 @@ export default function InitScreen({ haveInfo, setHaveInfo }) {
 
   const _onPressButton = async () => {
     await AsyncStorage.setItem("department", department);
-    await AsyncStorage.setItem("entranceYear", entranceYear);
     await AsyncStorage.setItem("job", job);
+    if (job == "Professor") await AsyncStorage.setItem("entranceYear", "0");
+    else await AsyncStorage.setItem("entranceYear", entranceYear);
     setHaveInfo(true);
   };
 

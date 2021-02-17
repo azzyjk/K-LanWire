@@ -15,8 +15,9 @@ export default function SettingScreen({ navigation }) {
 
   const _onPressButton = async () => {
     await AsyncStorage.setItem("department", department);
-    await AsyncStorage.setItem("entranceYear", entranceYear);
     await AsyncStorage.setItem("job", job);
+    if (job == "Professor") await AsyncStorage.setItem("entranceYear", "0");
+    else await AsyncStorage.setItem("entranceYear", entranceYear);
     Alert.alert("수정되었습니다.");
     navigation.goBack();
   };
