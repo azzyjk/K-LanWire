@@ -16,7 +16,12 @@ export default function MainScreen({ navigation }) {
       <View style={styles.logoComponent}>
         <Logo />
       </View>
-      <TouchableOpacity style={styles.buttonComponent}>
+      <TouchableOpacity
+        style={styles.buttonComponent}
+        onPress={() => {
+          navigation.navigate("Chat");
+        }}
+      >
         <Text style={styles.buttonFont}> 챗봇</Text>
       </TouchableOpacity>
       <TouchableOpacity
