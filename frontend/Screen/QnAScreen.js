@@ -1,10 +1,14 @@
 import React, { useCallback, useState } from "react";
-import { SafeAreaView, ScrollView, View } from "react-native";
+import { RefreshControl, SafeAreaView, ScrollView, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 
 import QuestionCard from "../Component/QuestionCard";
+
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
 
 export default function QnAScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
@@ -38,11 +42,25 @@ export default function QnAScreen({ navigation }) {
     }, [])
   );
 
+  const _onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(1000).then(() => {
+      (async () => {
+        _getQuestions();
+        await setRefreshing(false);
+      })();
+    });
+  });
+
   if (isLoading == false) return <View />;
   else {
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
+          }
+        >
           {Object.entries(questions).map((val, idx) => {
             return (
               <QuestionCard
