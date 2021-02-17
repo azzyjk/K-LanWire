@@ -30,7 +30,7 @@ export default function QuestionScreen({ route, navigation }) {
         <SafeAreaView style={styles.question}>
           <ScrollView>
             <View style={styles.card}>
-              <Text style={{ fontSize: 40, fontWeight: "900" }}>Q</Text>
+              <Text style={{ fontSize: 40, fontWeight: "900" }}> {` Q`}</Text>
               <Text></Text>
               <Text style={{ color: "gray" }}>
                 {`  < ${questionYear} ${questionDepartment} >`}
