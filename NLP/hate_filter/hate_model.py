@@ -1,4 +1,3 @@
-# 모델 deploy용 Python File, 학습과정은 hate_model.ipynb에서 
 
 # https://huggingface.co/transformers/installation.html
 # pip install transformers
@@ -21,10 +20,10 @@ def load_model():
     electra_output = electra_model(input_toks, attention_mask=input_masks).last_hidden_state
 
     x = tf.keras.layers.GlobalAveragePooling1D()(electra_output)
-    x = tf.keras.layers.Dense(128, activation='relu')(x)
-    x = tf.keras.layers.Dropout(0.2)(x)
-    x = tf.keras.layers.Dense(32, activation='relu')(x)
-    x = tf.keras.layers.Dropout(0.2)(x)
+    # x = tf.keras.layers.Dense(128, activation='relu')(x)
+    # x = tf.keras.layers.Dropout(0.2)(x)
+    # x = tf.keras.layers.Dense(32, activation='relu')(x)
+    # x = tf.keras.layers.Dropout(0.2)(x)
     y = tf.keras.layers.Dense(2, activation='softmax')(x)
 
     model = tf.keras.models.Model(inputs=[input_toks, input_masks], outputs=y)
