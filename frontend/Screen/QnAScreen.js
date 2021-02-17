@@ -4,9 +4,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 
+import QuestionCard from "../Component/QuestionCard";
+
 export default function QnAScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
-  const [quetions, setQuestions] = useState(false);
+  const [questions, setQuestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const _getQuestions = async () => {
@@ -33,14 +35,29 @@ export default function QnAScreen({ navigation }) {
         await _getQuestions();
         setIsLoading(true);
       })();
-    })
+    }, [])
   );
 
   if (isLoading == false) return <View />;
   else {
     return (
       <SafeAreaView>
-        <ScrollView></ScrollView>
+        <ScrollView>
+          {Object.entries(questions).map((val, idx) => {
+            return (
+              <QuestionCard
+                num={val[1]["Num"]}
+                question={val[1]["Question"]}
+                questionDepartment={val[1]["QuestionDepartment"]}
+                questionYear={val[1]["QuestionYear"]}
+                solved={val[1]["Solved"]}
+                answer={val[1]["Answers"]}
+                key={idx}
+                navigation={navigation}
+              />
+            );
+          })}
+        </ScrollView>
       </SafeAreaView>
     );
   }
