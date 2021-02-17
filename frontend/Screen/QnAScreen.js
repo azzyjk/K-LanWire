@@ -41,7 +41,7 @@ export default function QnAScreen({ navigation }) {
   if (isLoading == false) return <View />;
   else {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
           {Object.entries(questions).map((val, idx) => {
             return (
@@ -51,7 +51,7 @@ export default function QnAScreen({ navigation }) {
                 questionDepartment={val[1]["QuestionDepartment"]}
                 questionYear={val[1]["QuestionYear"]}
                 solved={val[1]["Solved"]}
-                answer={val[1]["Answers"]}
+                answers={val[1]["Answers"]}
                 key={idx}
                 navigation={navigation}
               />
