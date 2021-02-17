@@ -11,30 +11,43 @@ export default function QuestionCard({
   questionYear,
   questionDepartment,
 }) {
+  const _onPress = () => {
+    navigation.navigate("Question", {
+      num: num,
+      question: question,
+      solved: solved,
+      answers: answers,
+      questionYear: questionYear,
+      questionDepartment: questionDepartment,
+    });
+  };
+
   return (
-    <View style={styles.inner}>
-      <View style={styles.question}>
-        <Text
-          style={{ color: "gray" }}
-        >{` < ${questionYear} ${questionDepartment} >`}</Text>
-        <Text />
-        <Text
-          style={styles.questionFont}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          Q:{" "}
-          {question.length < 30
-            ? `${question}`
-            : `${question.substring(0, 20)}...`}
-          {solved == true ? (
-            <Ionicons name="md-checkmark" size={20} color="green" />
-          ) : (
-            <Text />
-          )}
-        </Text>
+    <TouchableOpacity style={styles.container} onPress={_onPress}>
+      <View style={styles.inner}>
+        <View style={styles.question}>
+          <Text
+            style={{ color: "gray" }}
+          >{` < ${questionYear} ${questionDepartment} >`}</Text>
+          <Text />
+          <Text
+            style={styles.questionFont}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {"Q : "}
+            {question.length < 30
+              ? `${question}`
+              : `${question.substring(0, 20)}...`}
+            {solved == true ? (
+              <Ionicons name="md-checkmark" size={20} color="green" />
+            ) : (
+              <Text />
+            )}
+          </Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
