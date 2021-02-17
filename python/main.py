@@ -34,8 +34,8 @@ class QueGetter:
             raw_data = channel.basic_get(queue=self._recv_queue, auto_ack=True) # 3번째꺼가 원하고자 하는 String을 가져와서 처리를 시작한다.
             if raw_data[2] is not None:
                 data = raw_data[2].decode().split("|")
-                print("요청받은 pid : ", data[0], "  요청받은 항목 : ", data[1])
                 checker_result = str(checker.predict([data[1]])[0])
+                print("요청받은 pid : ", data[0], "\t요청받은 항목 : ", data[1], "\t결과 : ", checker_result)
                 result = data[0].encode() + b'|' + checker_result.encode()
                 # print("Final Result : ", result)
                 if data[2] == "question":

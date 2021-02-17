@@ -130,18 +130,21 @@ func (s *serverHandler) answerRegisterHandler(serverResponse http.ResponseWriter
 	}
 	failed := false
 
-	// 0차 처리 - AI가 부적절한 답변이라고 생각하면 DB에 등록하지 않음
+	// 1차 처리 - AI가 부적절한 답변이라고 생각하면 DB에 등록하지 않음
 	if s.answerChecker.checkWrong(value[3]) {
 		errorHandling(&serverResponse, 400, "부적절한 답변으로 간주되어 답변이 등록되지 않았습니다.", errors.New("답변 \""+value[3]+"\" 은 부적절합니다"))
 		return
 	}
 
+	// 2차 처리 - answer, question 테이블에 값 넣기 (필수)
 	var waiter sync.WaitGroup
-	waiter.Add(3)
+	waiter.Add(2)
 
-	// 1차 처리 - answer 테이블에 값 넣기
+	go s.answerChatBotHandle(value)
+
+	// answer 테이블에 값 넣기
 	go func() {
-		_, err := s.db.Exec("insert into answer (questionNum, answerEntranceYear, answerDepartment, answer, rank) values (?, ?, ?, ?, ?)", value[0], value[1], value[2], value[3], value[4])
+		_, err := s.db.Exec("insert into answer (questionNum, answerEntranceYear, answerDepartment, answer, rank, answerId) values (?, ?, ?, ?, ?, ?)", value[0], value[1], value[2], value[3], value[4], "")
 		if err != nil {
 			errorHandling(&serverResponse, 500, "DB에 답변을 등록하는데 실패했습니다.", err)
 			failed = true
@@ -149,7 +152,7 @@ func (s *serverHandler) answerRegisterHandler(serverResponse http.ResponseWriter
 		waiter.Done()
 	}()
 
-	// 2차 처리 - question 테이블에 해당 값 solved로 표시
+	// uestion 테이블에 해당 값 solved로 표시
 	go func() {
 		_, err := s.db.Exec("update question set solved = ? where num = ?", 1, value[0])
 		if err != nil {
@@ -159,24 +162,105 @@ func (s *serverHandler) answerRegisterHandler(serverResponse http.ResponseWriter
 		waiter.Done()
 	}()
 
-	// 3차 처리 - Chatbot에 답변 등록하기
-	go func() {
-		var question string
-		reqVal, _ := s.db.Query("select question from question where num = ?", value[0])
-		reqVal.Next()
-		err := reqVal.Scan(&question)
-		if err != nil {
-			log.Println("질문 가져오는거 실패! : ", err)
-		}
-		go s.chatBotInput.sendQAsetToChatbot(question, value[3])
-		waiter.Done()
-	}()
-
-	// 4차 처리 - Final 응답
+	// 3차 처리 - Final 응답
 	waiter.Wait()
 	if failed {
 		return
 	}
 	serverResponse.WriteHeader(200)
 	serverResponse.Write(messageInput("답변이 정상적으로 DB에 등록되었습니다."))
+}
+
+func (s *serverHandler) answerChatBotHandle(value []string) {
+	// 답변을 확인하고 챗봇에 변형하거나 그대로 두기 위해 설정
+
+	// 1차 처리 - DB에 질의해 답변의 존재여부 및 형태 알아옴
+	status := 1
+	var waiter sync.WaitGroup
+	var isAnsweredValue [3]sql.NullString
+	log.Println(value[0])
+	isAnswered, err := s.db.Query("select num, rank, answerId from answer where questionNum = ? and answerId != ''", value[0])
+	if !isAnswered.Next() { // 기존 답변이 등록되어있지 않을 때
+		log.Println("기존 답변이 등록되어있지 않습니다.")
+		status = 2
+	} else {
+		err = isAnswered.Scan(&isAnsweredValue[0], &isAnsweredValue[1], &isAnsweredValue[2])
+		if err != nil {
+			log.Println("DB의 기존 답변을 읽어오던 중 오류가 발생했습니다.")
+		}
+		if nullStringToString(isAnsweredValue[1]) == "0" && value[4] == "1" { // 기존에 등록된 답변이 학생이고 새로 등록하는 답변이 교수님일 때
+			status = 3
+		}
+	}
+
+	// 2차 처리 - 챗봇에 업데이트해야할 경우 업데이트, 새로 등록해야할 경우 새로 등록
+	// 질문 및 대답으로 등록된 번호 가져오기
+	if status != 1 { // 업데이트해야하는 경우에만 업데이트함
+		waiter.Wait()
+		waiter.Add(2)
+
+		var question string
+		var answerNum string
+
+		go func() {
+			reqVal, _ := s.db.Query("select question from question where num = ?", value[0])
+			reqVal.Next()
+			err = reqVal.Scan(&question)
+			if err != nil {
+				log.Println("질문 가져오는거 실패! : ", err)
+			}
+			waiter.Done()
+		}()
+
+		//key := []string{"questionNum", "answerEntranceYear", "answerDepartment", "answer", "rank"}
+		go func() {
+			reqVal, _ := s.db.Query("select num from answer where questionNum = ? and answerEntranceYear = ? and answerDepartment = ? and answer = ? and rank = ?", value[0], value[1], value[2], value[3], value[4])
+			reqVal.Next()
+			err = reqVal.Scan(&answerNum)
+			if err != nil {
+				log.Println("답변번호 가져오는거 실패! : ", err)
+			}
+			waiter.Done()
+		}()
+
+		waiter.Wait()
+
+		// 여기서 챗봇 로직 업데이트
+		//isAnswered, err := s.db.Query("select num, rank, answerId from answer where questionNum = ? and answerId != ''", value[0])
+
+		if status == 2 {
+			answerId := s.chatBotInput.addQAset(question, value[3])
+			log.Println("정상등록됨 : ", answerId)
+			_, err = s.db.Exec("update answer set answerId = ? where num = ?", answerId, answerNum)
+			if err != nil {
+				log.Println("DB에 챗봇 표시를 Marking하는 데에 실패했습니다.")
+			}
+		} else {
+			waiter.Add(3)
+			go func() {
+				updated := s.chatBotInput.updateQAset(question, value[3], nullStringToString(isAnsweredValue[2]))
+				if !updated {
+					log.Println("대답 업데이트 실패!")
+				}
+				waiter.Done()
+			}()
+			go func() {
+				_, err = s.db.Exec("update answer set answerId = '' where num = ?", nullStringToString(isAnsweredValue[0]))
+				if err != nil {
+					log.Println("기존 챗봇채택 대답 DB 업데이트 실패 : ", err)
+				}
+				waiter.Done()
+			}()
+			go func() {
+				_, err2 := s.db.Exec("update answer set answerId = ? where num = ?", nullStringToString(isAnsweredValue[2]), answerNum)
+				if err != nil {
+					log.Println("새로운 챗봇채택 대답 DB 업데이트 실패 : ", err2)
+				}
+				waiter.Done()
+			}()
+			waiter.Wait()
+		}
+		log.Println("챗봇 및 DB 업데이트 종료")
+
+	}
 }
