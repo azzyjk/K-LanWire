@@ -27,9 +27,15 @@
 * Chatbot에서 대답이 없는 질문을 DB에 기록하고, 복수의 대답 중 정제된 대답을 Chatbot 지식 데이터베이스로 갱신 요청한다.
 
 ### AI
-* TensorFlow 기반 NLP 로 이루어져 있다.
-* 복수의 대답들 중 부적절한 답변을 제거한다.
-* 기본적으로 백엔드 서버에 Implement 되어있다.
+  1. 악플 분류 AI 모델
+      - 사용자가 작성한 답변이 부적절하면 필터링
+      - KoELECTRA 모델을 Task에 맞게 Fine-Tune
+      - 학습 데이터: https://github.com/kocohub/korean-hate-speech
+      - KoELECTRA: https://github.com/monologg/KoELECTRA
+  2. 질의 분류 AI 모델
+      - 사용자가 질의응답 게시판에 질의한 내용이 실제 질문이 아닐 경우 필터링
+      - KoELECTRA 모델을 Task에 맞게 Fine-Tune
+      - 학습 데이터: https://github.com/warnikchow/3i4k
 
 ### DB
 * MySQL로 되어있다.
