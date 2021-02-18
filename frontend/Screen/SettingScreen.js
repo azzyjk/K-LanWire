@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SettingScreen({ navigation }) {
   const [department, setDepartment] = useState("컴퓨터공학부");
-  const [entranceYear, setEntranceYear] = useState("2021");
+  const [entranceYear, setEntranceYear] = useState("2019");
   const [job, setJob] = useState("Professor");
 
   const _onPressButton = async () => {

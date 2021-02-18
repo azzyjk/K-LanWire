@@ -9,7 +9,7 @@ import JobPicker from "../Component/JobPicker";
 
 export default function InitScreen({ haveInfo, setHaveInfo }) {
   const [department, setDepartment] = useState("컴퓨터공학부");
-  const [entranceYear, setEntranceYear] = useState("2021");
+  const [entranceYear, setEntranceYear] = useState("2019");
   const [job, setJob] = useState("Professor");
 
   const _onPressButton = async () => {
