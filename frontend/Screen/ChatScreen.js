@@ -9,8 +9,10 @@ import { Ionicons } from "@expo/vector-icons";
 const { height, width } = Dimensions.get("window");
 
 class ChatScreen extends Component {
+
   constructor(props) {
     super(props);
+    this.update = 0;
     AsyncStorage.getItem("entranceYear", (err, result) => {
       this.entranceYear = result;
       AsyncStorage.getItem("department", (err, result) => {
@@ -31,56 +33,132 @@ class ChatScreen extends Component {
         }
       });
     });
+
     this.state = {
       log: [],
       msg: "",
       count: 1000,
       random: 0,
+
     };
   }
 
-  componentDidMount() {
+  componentDidUpdate(){
+    
+
+    if(this.update == 0 ){
+        AsyncStorage.getItem("entranceYear", (err, result) => {
+            this.entranceYear = result;
+            AsyncStorage.getItem("department", (err, result) => {
+              this.department = result;
+      
+              if (this.department) {
+                if (this.department == "컴퓨터공학부") {
+                  this.departmentId = "c";
+                } else if (this.department == "전기전자공학부") {
+                  this.departmentId = "e";
+                } else if (this.department == "기계항공공학부") {
+                  this.departmentId = "m";
+                } else {
+                  this.departmentId = "";
+                }
+                this.departmentId =
+                  this.departmentId + this.entranceYear[2] + this.entranceYear[3];
+                  
+                  this.update = 1;
+                  var danbee_head = {
+                    "Content-Type": "application/json;charset=UTF-8",
+                  };
+              
+                  var danbee_body = {
+                    user_id: "cse17",
+                  };
+              
+                  var danbee_url =
+                    "https://danbee.ai/chatflow/chatbot/v2.0/1d1e0598-3c44-4a8e-bd41-908a9c14846a/welcome.do";
+              
+                  var options = {
+                    headers: danbee_head,
+                    data: JSON.stringify(danbee_body),
+                    method: "POST",
+                    url: danbee_url,
+                  };
+              
+                  axios(options).then((res) => {
+                    var preLog = [];
+                    var tmpMessage = {
+                      _id: this.state.count,
+                      text: res.data.responseSet.result.result[0].message,
+                      createdAt: new Date(),
+                      user: {
+                        _id: 2,
+                        name: "React Native",
+                        avatar:
+                          "https://blog.kakaocdn.net/dn/esugIB/btqwv7PLOZT/oMb10ItMqbhdX0dKomtDQ0/img.jpg",
+                      },
+                    };
+                    preLog = [...preLog, tmpMessage];
+                    this.setState({
+                      
+                      log: preLog,
+                      msg: tmpMessage,
+                      count: this.state.count + 1,
+                      
+                    });
+                  });
+              }
+            });
+          })
+         
+    }
+  }
+
+  init(){
     var danbee_head = {
-      "Content-Type": "application/json;charset=UTF-8",
-    };
-
-    var danbee_body = {
-      user_id: "cse17",
-    };
-
-    var danbee_url =
-      "https://danbee.ai/chatflow/chatbot/v2.0/1d1e0598-3c44-4a8e-bd41-908a9c14846a/welcome.do";
-
-    var options = {
-      headers: danbee_head,
-      data: JSON.stringify(danbee_body),
-      method: "POST",
-      url: danbee_url,
-    };
-
-    axios(options).then((res) => {
-      var preLog = [];
-      var tmpMessage = {
-        _id: this.state.count,
-        text: res.data.responseSet.result.result[0].message,
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar:
-            "https://blog.kakaocdn.net/dn/esugIB/btqwv7PLOZT/oMb10ItMqbhdX0dKomtDQ0/img.jpg",
-        },
+        "Content-Type": "application/json;charset=UTF-8",
       };
-      preLog = [...preLog, tmpMessage];
-      this.setState({
-        log: preLog,
-        msg: tmpMessage,
-        count: this.state.count + 1,
-        tmp: 0,
+  
+      var danbee_body = {
+        user_id: "cse17",
+      };
+  
+      var danbee_url =
+        "https://danbee.ai/chatflow/chatbot/v2.0/1d1e0598-3c44-4a8e-bd41-908a9c14846a/welcome.do";
+  
+      var options = {
+        headers: danbee_head,
+        data: JSON.stringify(danbee_body),
+        method: "POST",
+        url: danbee_url,
+      };
+  
+      axios(options).then((res) => {
+        var preLog = [];
+        var tmpMessage = {
+          _id: this.state.count,
+          text: res.data.responseSet.result.result[0].message,
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: "React Native",
+            avatar:
+              "https://blog.kakaocdn.net/dn/esugIB/btqwv7PLOZT/oMb10ItMqbhdX0dKomtDQ0/img.jpg",
+          },
+        };
+        preLog = [...preLog, tmpMessage];
+        this.setState({
+          
+          log: preLog,
+          msg: tmpMessage,
+          count: this.state.count + 1,
+        });
+  
       });
-
-      //console.log(this.entranceYear);
-    });
+  }
+  componentDidMount() {
+    
+    this.init();
+    
   }
 
   renderBubble = (props) => {
@@ -217,7 +295,11 @@ class ChatScreen extends Component {
         >
           <TouchableOpacity
             style={{ flex: 1, paddingLeft: 10 }}
-            onPress={() => this.props.navigation.navigate("Setting")}
+            onPress={() => {
+                
+                this.update = 0;
+                this.props.navigation.navigate("Setting");
+            }}
           >
             <Ionicons name="md-settings" size={32} color="black" />
           </TouchableOpacity>
@@ -258,28 +340,3 @@ class ChatScreen extends Component {
 }
 
 export default ChatScreen;
-
-async () => {
-  AsyncStorage.getItem("entranceYear", (err, result) => {
-    this.entranceYear = result;
-    AsyncStorage.getItem("department", (err, result) => {
-      this.department = result;
-
-      if (this.department) {
-        if (this.department == "컴퓨터공학부") {
-          this.departmentId = "c";
-        } else if (this.department == "전기전자공학부") {
-          this.departmentId = "e";
-        } else if (this.department == "기계항공공학부") {
-          this.departmentId = "m";
-        } else {
-          this.departmentId = "";
-        }
-        this.departmentId =
-          this.departmentId + this.entranceYear[2] + this.entranceYear[3];
-      }
-    });
-  });
-
-  console.log(this.entranceYear, this.department);
-};

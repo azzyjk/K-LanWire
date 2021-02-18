@@ -21,7 +21,7 @@ export default function SettingScreen({ navigation }) {
     if (job == "Professor") await AsyncStorage.setItem("entranceYear", "2000");
     else await AsyncStorage.setItem("entranceYear", entranceYear);
     Alert.alert("수정되었습니다.");
-    navigation.goBack();
+    navigation.navigate("Chat",{data : "data"});
   };
 
   return (
