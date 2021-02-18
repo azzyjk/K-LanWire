@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, Alert } from "react-native";
 
+import { TouchableOpacity } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import Logo from "../Component/Logo";
 import DepartmentPicker from "../Component/DepartmentPicker";
 import EntranceYearPicker from "../Component/EntranceYearPicker";
 import JobPicker from "..//Component/JobPicker";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Tab from "../Component/Tab";
 
 export default function SettingScreen({ navigation }) {
   const [department, setDepartment] = useState("컴퓨터공학부");
@@ -24,6 +26,7 @@ export default function SettingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Tab name={"Setting"} />
       <View style={styles.logoComponent}>
         <Logo />
       </View>
