@@ -213,7 +213,7 @@ class ChatScreen extends Component {
             zIndex: 10,
           }}
         >
-          <Text style={{ fontSize: 30, fontWeight: "900" }}></Text>
+          <Text style={{ fontSize: 30, fontWeight: "900" }}>{this.entranceYear} {this.department}</Text>
         </View>
         <GiftedChat
           placeholder={"메세지를 입력하세요..."}
