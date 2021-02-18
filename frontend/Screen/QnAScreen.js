@@ -1,9 +1,17 @@
 import React, { useCallback, useState } from "react";
-import { RefreshControl, SafeAreaView, ScrollView, View } from "react-native";
+import {
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
+import { Ionicons } from "@expo/vector-icons";
 
+import Tab from "../Component/Tab";
 import QuestionCard from "../Component/QuestionCard";
 
 const wait = (timeout) => {
@@ -55,28 +63,33 @@ export default function QnAScreen({ navigation }) {
   if (isLoading == false) return <View />;
   else {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
-          }
-        >
-          {Object.entries(questions).map((val, idx) => {
-            return (
-              <QuestionCard
-                num={val[1]["Num"]}
-                question={val[1]["Question"]}
-                questionDepartment={val[1]["QuestionDepartment"]}
-                questionYear={val[1]["QuestionYear"]}
-                solved={val[1]["Solved"]}
-                answers={val[1]["Answers"]}
-                key={idx}
-                navigation={navigation}
-              />
-            );
-          })}
-        </ScrollView>
-      </SafeAreaView>
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: "white" }}>
+          <Tab navigation={navigation} name={"QnA"} />
+        </View>
+        <SafeAreaView style={{ flex: 9 }}>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={_onRefresh} />
+            }
+          >
+            {Object.entries(questions).map((val, idx) => {
+              return (
+                <QuestionCard
+                  num={val[1]["Num"]}
+                  question={val[1]["Question"]}
+                  questionDepartment={val[1]["QuestionDepartment"]}
+                  questionYear={val[1]["QuestionYear"]}
+                  solved={val[1]["Solved"]}
+                  answers={val[1]["Answers"]}
+                  key={idx}
+                  navigation={navigation}
+                />
+              );
+            })}
+          </ScrollView>
+        </SafeAreaView>
+      </View>
     );
   }
 }

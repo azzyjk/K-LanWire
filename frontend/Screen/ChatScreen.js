@@ -1,9 +1,11 @@
 import React from "react";
 import { Component } from "react";
-import { View, Text, Dimensions } from "react-native";
+import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
+
 const { height, width } = Dimensions.get("window");
 
 class ChatScreen extends Component {
@@ -205,27 +207,51 @@ class ChatScreen extends Component {
       <View style={{ flex: 1 }}>
         <View
           style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            flexDirection: "row",
+
             alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            width: width,
-            top: 50,
-            zIndex: 10,
+            paddingTop: 20,
           }}
         >
-          <Text style={{ fontSize: 30, fontWeight: "900" }}>{this.entranceYear} {this.department}</Text>
+          <TouchableOpacity
+            style={{ flex: 1, paddingLeft: 10 }}
+            onPress={() => this.props.navigation.navigate("Setting")}
+          >
+            <Ionicons name="md-settings" size={32} color="black" />
+          </TouchableOpacity>
+          <View
+            style={{
+              flex: 2,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 20, fontWeight: "900" }}>
+              {this.entranceYear} {this.department}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={{ flex: 1, alignItems: "flex-end", paddingRight: 10 }}
+            onPress={() => this.props.navigation.navigate("QnA")}
+          >
+            <Text style={{ fontSize: 33, fontWeight: "900" }}> Q</Text>
+            {/* <Ionicons name="ios-people" size={32} color="black" /> */}
+          </TouchableOpacity>
         </View>
-        <GiftedChat
-          placeholder={"메세지를 입력하세요..."}
-          alwaysShowSend={true}
-          messages={this.state.log}
-          renderBubble={this.renderBubble}
-          textInputProps={{ keyboardAppearance: "dark", autoCorrect: false }}
-          onSend={(messages) => onSend(messages)}
-          user={{
-            _id: 1,
-          }}
-        />
+        <View style={{ flex: 10 }}>
+          <GiftedChat
+            placeholder={"메세지를 입력하세요..."}
+            alwaysShowSend={true}
+            messages={this.state.log}
+            renderBubble={this.renderBubble}
+            textInputProps={{ keyboardAppearance: "dark", autoCorrect: false }}
+            onSend={(messages) => onSend(messages)}
+            user={{
+              _id: 1,
+            }}
+          />
+        </View>
       </View>
     );
   }

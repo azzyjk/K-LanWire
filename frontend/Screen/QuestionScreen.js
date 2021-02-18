@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import Answer from "../Component/Answer";
+import Tab from "../Component/Tab";
 
 export default function QuestionScreen({ route, navigation }) {
   const {
@@ -25,50 +26,55 @@ export default function QuestionScreen({ route, navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <View style={{ flex: 5, justifyContent: "space-around" }}>
-        <SafeAreaView style={styles.question}>
-          <ScrollView>
-            <View style={styles.card}>
-              <Text style={{ fontSize: 40, fontWeight: "900" }}> {` Q`}</Text>
-              <Text></Text>
-              <Text style={{ color: "gray" }}>
-                {`  < ${questionYear} ${questionDepartment} >`}
-              </Text>
-              <View style={{ margin: 20 }}>
-                <Text style={styles.questionFont}> {question}</Text>
-                <Text></Text>
-              </View>
-            </View>
-            {solved == true ? (
-              Object.keys(answers).map((idx) => {
-                return (
-                  <View style={styles.card} key={idx}>
-                    <View style={{ margin: 15 }}>
-                      <Text style={{ color: "gray" }}>
-                        {`< `}
-                        {answers[idx]["AnswerYear"] == "2000" ? (
-                          <Text>교수 </Text>
-                        ) : (
-                          `${answers[idx]["AnswerYear"]} `
-                        )}
-                        {`${answers[idx]["AnswerDepartment"]} >`}
-                      </Text>
-                      <Text style={{ color: "gray" }}>{""}</Text>
-                      <Text style={{ fontSize: 15 }}>
-                        {answers[idx]["Answer"]}
-                      </Text>
-                    </View>
-                  </View>
-                );
-              })
-            ) : (
-              <View></View>
-            )}
-          </ScrollView>
-        </SafeAreaView>
+      <View style={{ flex: 1 }}>
+        <Tab navigation={navigation} name={"Question"} />
       </View>
-      <View style={styles.answer}>
-        <Answer num={num} navigation={navigation} />
+      <View style={{ flex: 10 }}>
+        <View style={{ flex: 5, justifyContent: "space-around" }}>
+          <SafeAreaView style={styles.question}>
+            <ScrollView>
+              <View style={styles.card}>
+                <Text style={{ fontSize: 40, fontWeight: "900" }}> {` Q`}</Text>
+                <Text></Text>
+                <Text style={{ color: "gray" }}>
+                  {`  < ${questionYear} ${questionDepartment} >`}
+                </Text>
+                <View style={{ margin: 20 }}>
+                  <Text style={styles.questionFont}> {question}</Text>
+                  <Text></Text>
+                </View>
+              </View>
+              {solved == true ? (
+                Object.keys(answers).map((idx) => {
+                  return (
+                    <View style={styles.card} key={idx}>
+                      <View style={{ margin: 15 }}>
+                        <Text style={{ color: "gray" }}>
+                          {`< `}
+                          {answers[idx]["AnswerYear"] == "2000" ? (
+                            <Text>교수 </Text>
+                          ) : (
+                            `${answers[idx]["AnswerYear"]} `
+                          )}
+                          {`${answers[idx]["AnswerDepartment"]} >`}
+                        </Text>
+                        <Text style={{ color: "gray" }}>{""}</Text>
+                        <Text style={{ fontSize: 15 }}>
+                          {answers[idx]["Answer"]}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })
+              ) : (
+                <View></View>
+              )}
+            </ScrollView>
+          </SafeAreaView>
+        </View>
+        <View style={styles.answer}>
+          <Answer num={num} navigation={navigation} />
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
