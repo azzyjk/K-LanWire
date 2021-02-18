@@ -35,6 +35,7 @@ class ChatScreen extends Component {
       log: [],
       msg: "",
       count: 1000,
+      random: 0,
     };
   }
 
@@ -210,9 +211,8 @@ class ChatScreen extends Component {
             flex: 1,
             backgroundColor: "#fff",
             flexDirection: "row",
-
-            alignItems: "center",
-            paddingTop: 20,
+            alignItems: "flex-end",
+            paddingBottom: 10,
           }}
         >
           <TouchableOpacity
@@ -228,7 +228,8 @@ class ChatScreen extends Component {
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "900" }}>
-              {this.entranceYear} {this.department}
+              {this.entranceYear == "2000" ? "교수" : `${this.entranceYear}`}{" "}
+              {this.department}
             </Text>
           </View>
           <TouchableOpacity
@@ -236,7 +237,6 @@ class ChatScreen extends Component {
             onPress={() => this.props.navigation.navigate("QnA")}
           >
             <Text style={{ fontSize: 33, fontWeight: "900" }}> Q</Text>
-            {/* <Ionicons name="ios-people" size={32} color="black" /> */}
           </TouchableOpacity>
         </View>
         <View style={{ flex: 10 }}>
@@ -258,3 +258,28 @@ class ChatScreen extends Component {
 }
 
 export default ChatScreen;
+
+async () => {
+  AsyncStorage.getItem("entranceYear", (err, result) => {
+    this.entranceYear = result;
+    AsyncStorage.getItem("department", (err, result) => {
+      this.department = result;
+
+      if (this.department) {
+        if (this.department == "컴퓨터공학부") {
+          this.departmentId = "c";
+        } else if (this.department == "전기전자공학부") {
+          this.departmentId = "e";
+        } else if (this.department == "기계항공공학부") {
+          this.departmentId = "m";
+        } else {
+          this.departmentId = "";
+        }
+        this.departmentId =
+          this.departmentId + this.entranceYear[2] + this.entranceYear[3];
+      }
+    });
+  });
+
+  console.log(this.entranceYear, this.department);
+};
