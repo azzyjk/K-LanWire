@@ -51,8 +51,7 @@ export default function Answer({ num, navigation }) {
         navigation.goBack();
       })
       .catch((err) => {
-        Alert.alert("부적절한 답변입니다.\n 다시 입력해주세요.");
-        onChnageText("");
+        Alert.alert(err.response.data["message"]);
       });
   };
 
