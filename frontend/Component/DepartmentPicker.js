@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 export default function DepartmentPicker({ department, setDepartment }) {
-  const departments = ["컴퓨터공학부", "전지전자공학부", "기계항공공학부"];
+  const departments = ["컴퓨터공학부", "전기전자공학부", "기계항공공학부"];
   return (
     <View style={styles.container}>
       <Picker
