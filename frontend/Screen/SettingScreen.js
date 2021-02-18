@@ -26,7 +26,7 @@ export default function SettingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Tab name={"Setting"} />
+      <Tab navigation={navigation} name={"Setting"} />
       <View style={styles.logoComponent}>
         <Logo />
       </View>
