@@ -8,7 +8,7 @@ import re
 from hanspell import spell_checker
 
 EMB_LEN = 76
-DEFAULT_THRESH = 0.7
+DEFAULT_THRESH = 0.5
 
 def load_model():
     electra_model = TFElectraModel.from_pretrained('monologg/koelectra-base-v3-discriminator', from_pt=True)

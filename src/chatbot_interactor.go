@@ -37,7 +37,6 @@ func (c *chatBotInputer) basicRequest(key, value []string, reqUrl string) map[st
 	sendVal = sendVal[:len(sendVal)-1]
 	sendVal += "}"
 	byteSendVal := []byte(sendVal)
-	log.Println("testval : ", sendVal)
 
 	request, err := http.NewRequest("POST", reqUrl, bytes.NewBuffer(byteSendVal))
 	if err != nil {
@@ -57,7 +56,7 @@ func (c *chatBotInputer) basicRequest(key, value []string, reqUrl string) map[st
 
 	err = json.Unmarshal(byteResponse, &parsedValue)
 	if err != nil {
-		log.Println("Failed to parse data - convert to json")
+		log.Println("Failed to parse data - convert to json : ", err)
 	}
 
 	return parsedValue
@@ -68,7 +67,6 @@ func (c *chatBotInputer) addQAset(question, answer string) string {
 	key := []string{"q", "a"}
 	value := []string{"\"" + question + "\"", "\"" + answer + "\""}
 	result := c.basicRequest(key, value, c.addQAsetUrl)
-	log.Println("result : ", result)
 	return strconv.Itoa(int(result["id"].(float64)))
 }
 
@@ -77,7 +75,6 @@ func (c *chatBotInputer) updateQAset(question, answer, id string) bool {
 	key := []string{"q", "a", "id"}
 	value := []string{"\"" + question + "\"", "\"" + answer + "\"", id}
 	result := c.basicRequest(key, value, c.updateQAsetUrl)
-	log.Println("result : ", result)
 	if result["update"].(float64) == -1 {
 		return false
 	} else {

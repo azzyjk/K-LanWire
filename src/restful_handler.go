@@ -100,8 +100,13 @@ func (s *serverHandler) questionRegisterHandler(serverResponse http.ResponseWrit
 	}
 
 	// 0차 처리 - AI가 부적절한 답변이라고 생각하면 DB에 등록하지 않음
+	if len(strings.Split(value[0], " ")) < 4 {
+		errorHandling(&serverResponse, 400, "질문의 단어 수가 너무 적습니다. 최소 4단어 이상 입력해주세요", errors.New("질문 단어수가 적음"))
+		return
+	}
+
 	if s.questionChecker.checkWrong(value[0]) {
-		errorHandling(&serverResponse, 400, "부적절한 질문으로 간주되어 답변이 등록되지 않았습니다.", errors.New("질문 \""+value[0]+"\" 은 부적절합니다"))
+		errorHandling(&serverResponse, 400, "AI가 부적절한 질문으로 간주하여 답변이 등록되지 않았습니다.", errors.New("질문 \""+value[0]+"\" 은 부적절합니다"))
 		return
 	}
 
@@ -139,8 +144,13 @@ func (s *serverHandler) answerRegisterHandler(serverResponse http.ResponseWriter
 	failed := false
 
 	// 1차 처리 - AI가 부적절한 답변이라고 생각하면 DB에 등록하지 않음
-	if s.answerChecker.checkWrong(value[3]) {
-		errorHandling(&serverResponse, 400, "부적절한 답변으로 간주되어 답변이 등록되지 않았습니다.", errors.New("답변 \""+value[3]+"\" 은 부적절합니다"))
+	if len(strings.Split(value[3], " ")) < 4 {
+		errorHandling(&serverResponse, 400, "답변이 너무 짧습니다. 최소 4단어 이상 입력해주세요.", errors.New("답변 길이가 적음"))
+		return
+	}
+
+	if s.answerChecker.checkWrong(value[3]) || len(strings.Split(value[3], " ")) < 4 {
+		errorHandling(&serverResponse, 400, "AI가 부적절한 질문으로 간주하여 답변이 등록되지 않았습니다.", errors.New("답변 \""+value[3]+"\" 은 부적절합니다"))
 		return
 	}
 
@@ -176,7 +186,7 @@ func (s *serverHandler) answerRegisterHandler(serverResponse http.ResponseWriter
 		return
 	}
 	serverResponse.WriteHeader(200)
-	serverResponse.Write(messageInput("답변이 정상적으로 DB에 등록되었습니다."))
+	serverResponse.Write(messageInput("답변이 등록되었습니다."))
 }
 
 func (s *serverHandler) answerChatBotHandle(value []string) {
@@ -186,10 +196,9 @@ func (s *serverHandler) answerChatBotHandle(value []string) {
 	status := 1
 	var waiter sync.WaitGroup
 	var isAnsweredValue [3]sql.NullString
-	log.Println(value[0])
 	isAnswered, err := s.db.Query("select num, rank, answerId from answer where questionNum = ? and answerId != ''", value[0])
 	if !isAnswered.Next() { // 기존 답변이 등록되어있지 않을 때
-		log.Println("기존 답변이 등록되어있지 않습니다.")
+		log.Println("기존 답변이 등록되어있지 않습니다. 답변을 새로 등록합니다.")
 		status = 2
 	} else {
 		err = isAnswered.Scan(&isAnsweredValue[0], &isAnsweredValue[1], &isAnsweredValue[2])
@@ -233,13 +242,13 @@ func (s *serverHandler) answerChatBotHandle(value []string) {
 
 		waiter.Wait()
 
-		// 여기서 챗봇 로직 업데이트
+		// 여기서 챗봇 로직 업데이트기존 답변이 등록되어있지 않습니다.
 		//isAnswered, err := s.db.Query("select num, rank, answerId from answer where questionNum = ? and answerId != ''", value[0])
 
 		if status == 2 {
 			answerId := s.chatBotInput.addQAset(question, value[3])
-			log.Println("정상등록됨 : ", answerId)
-			_, err = s.db.Exec("update answer set answerId = ? where num = ?", answerId, answerNum)
+			log.Println("챗봇에 정상 등록되었습니다. 질문 : ", question, "\t답변 : ", value[3], "\t답변번호 : ", answerId)
+			_, err := s.db.Exec("update answer set answerId = ? where num = ?", answerId, answerNum)
 			if err != nil {
 				log.Println("DB에 챗봇 표시를 Marking하는 데에 실패했습니다.")
 			}
